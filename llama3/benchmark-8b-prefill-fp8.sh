@@ -13,6 +13,7 @@ readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null &
 readonly WORKING_DIR="${WORKING_DIR:-${SCRIPT_DIR}/tmp}"
 readonly PREFIX="${PREFIX:-base}"
 readonly IREE_BENCHMARK="$(which iree-benchmark-module)"
+readonly IREE_RUN="$(which iree-run-module)"
 readonly HIP_DEVICE="$1"
 readonly SEQ_LENGTH="$2"
 readonly INPUT_PATH="${INPUT_PATH:-${SCRIPT_DIR}/inputs/8b_fp8/args_bs4_${SEQ_LENGTH}}"
@@ -50,12 +51,23 @@ run_benchmark() {
     --device="hip://${HIP_DEVICE}" \
     --device_allocator=caching \
     --hip_use_streams=true \
-    --module="${WORKING_DIR}/${PREFIX}.8b_fp8.vmfb" \
+    --module="${WORKING_DIR}/${PREFIX}.8b_fp8_padded.vmfb" \
     --parameters=model="${IRPA}" \
     --function=prefill_bs4 \
     "${INPUTS[@]}" \
     --benchmark_repetitions=3
 }
+
+# run_benchmark() {
+#   "$IREE_RUN" \
+#     --device="hip://${HIP_DEVICE}" \
+#     --device_allocator=caching \
+#     --hip_use_streams=true \
+#     --module="${WORKING_DIR}/${PREFIX}.8b_fp8_padded.vmfb" \
+#     --parameters=model="${IRPA}" \
+#     --function=prefill_bs4 \
+#     "${INPUTS[@]}"
+# }
 
 if (( "${USE_TRACY}" == "1")); then
   TRACY_PORT=8087 IREE_PY_RUNTIME=tracy TRACY_NO_EXIT=1 run_benchmark &

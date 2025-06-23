@@ -20,6 +20,6 @@ readonly PREFIX="${PREFIX:-base}"
 set -x
 
 "${SCRIPT_DIR}/compile-8b-base.sh" "$IREE_COMPILE" "$CHIP" \
-  "${SCRIPT_DIR}/base_ir/8b_fp8.mlir" \
-  -o "${WORKING_DIR}/${PREFIX}.8b_fp8.vmfb" \
+  "${SCRIPT_DIR}/base_ir/8b_fp8_padded.mlir" \
+  -o "${WORKING_DIR}/${PREFIX}.8b_fp8_padded.vmfb" \
   "$@"
